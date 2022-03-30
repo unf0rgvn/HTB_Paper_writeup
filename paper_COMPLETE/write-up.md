@@ -34,6 +34,20 @@ Here we are introduced to a bot(recyclops) who can retrieve some informations to
 In this part I didn't know what to do after the LFI, so just googling i found a site which tells how to do it. The file /proc/self/environ has some informations of the environment of the process. Just type "recyclops ../../../proc/self/environ". We got it! Now we have the credentials of the user "dwight".
 [proc_self]
 
-Now we can use SSH to connect to dwight terminal. We in! 
+Now we can use SSH to connect to dwight termitnal. We in! 
 
 ## Privilege escalation
+
+Here we already have the user flag. Now we need to escalate privilege to root. 
+[user.txt]
+
+In the user directory it has linpeas.sh tool, but it won't be so usefull. There's a file called test.sh, that give us an clue of what we will explore. That vulnerability has an CVE -- CVE-2021-3560 --. That script will not do, but there's a video uploaded by the github itself that explain this [CVE](https://www.youtube.com/watch?v=QZhz64yEd0g). I'll spare you the explanation of how the vulnerability works, as the video does it much better.
+[head_teste]
+
+We're gonna use these payloads in sequence;
+
+```
+dbus-send --system --dest=org.freedesktop.Accounts --type=method_call --print-reply /org/freedesktop/Accounts org.freedesktop.Accounts.CreateUser string:boris string:"Boris Ivanovich Grishenko" int32:1
+----------------------------------------------
+
+```
