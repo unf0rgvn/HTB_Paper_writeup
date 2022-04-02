@@ -7,7 +7,7 @@ Write-up of the machine "Paper" on HackTheBox. This machine include some LFI(I g
 ## Solution:
 
 ## WEB
-When we starts the machine it give us an IP address (in my case 10.10.11.143). It's a default page of an apache server. We can ran nmap, nikto to see if there's any suspicious stuff.
+When we start the machine it give us an IP address (in my case 10.10.11.143). It's a default page of an apache server. We can ran nmap, nikto to see if there's any suspicious stuff.
 ![nmap_nikto](nmap_nikto_log.png)
 
 Looking at `nikto.log` we can see it captured an "Uncommon header 'x-backend-server', with contents: office.paper". We also could find this 'x-backend-server' using `whatweb` tool.
@@ -37,7 +37,7 @@ In this part I didn't know what to do after the LFI, so just googling i found a 
 
 ![proc_self](proc_self.png) 
 
-Now we can use SSH to connect to dwight termitnal. We in! 
+Now we can use SSH to connect to dwight terminal. We are in! 
 
 ## Privilege escalation
 
